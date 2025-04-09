@@ -5,6 +5,24 @@ import { ProductsService } from './products.service';
 export class ProductsController {
 
   constructor(private readonly productsService: ProductsService ){}  
+
+  @Get()
+  getAllProducts() {
+    return this.productsService.getAll();
+  }   
+  @Post()
+  @HttpCode(204)
+  createProduct(
+    @Body('name') name: string,
+    @Body('description') description: string
+  ) {
+    this.productsService.insert({
+      id: this.productsService.getAll().length,
+      name,
+      description
+    });
+  }
+
     @Get('inventario')
     getHelloInProduct(): string{
         return "Estamos en produccion"
@@ -46,13 +64,7 @@ export class ProductsController {
 //    }
 
 //Recibir datos Post del body por su nombre
-@Post()
-createProduct(
-  @Body('name') name: string, 
-  @Body('description') description: string
-) {
-  return `Creo el producto ${name} con descripción ${description}.`;
-}
+
 
 //Error 404
 @Get('ruta-error-404')
