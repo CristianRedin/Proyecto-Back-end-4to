@@ -1,7 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query, Res } from '@nestjs/common';
+import { ProductsService } from './products.service';
 
 @Controller('products')
 export class ProductsController {
+
+  constructor(private readonly productsService: ProductsService ){}  
     @Get('inventario')
     getHelloInProduct(): string{
         return "Estamos en produccion"
