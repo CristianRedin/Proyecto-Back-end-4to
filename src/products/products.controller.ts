@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Put, Query, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, ParseIntPipe, Patch, Post, Put, Query, Res } from '@nestjs/common';
 import { ProductsService } from './products.service';
+import { Product } from './interfaces/product/product.interface';
 
 @Controller('products')
 export class ProductsController {
@@ -11,7 +12,7 @@ export class ProductsController {
     return this.productsService.getAll();
   }   
   @Post()
-  @HttpCode(204)
+  @HttpCode(201) 
   createProduct(
     @Body('name') name: string,
     @Body('description') description: string
@@ -19,9 +20,11 @@ export class ProductsController {
     this.productsService.insert({
       id: this.productsService.getAll().length,
       name,
-      description
+      description,
     });
+    return `Creo un producto ${name} con descripción ${description}`;
   }
+  
 
     @Get('inventario')
     getHelloInProduct(): string{
@@ -45,11 +48,7 @@ export class ProductsController {
 //       return `productos con id: ${id}`
 //   }
 
-//Destruccion de 2 parametros
-    @Get(':id/:size')
-    findWithSize(@Param ('id') id: number, @Param('size') size: string) {
-        return `Detalle de producto ${id}, en tamaño ${size}`
-    }
+
 
 //Uso de POST
 //    @Post()
@@ -74,14 +73,18 @@ rutaConError404(){
 }
 
 //Decorador RES
-@Get(':ide')
-find(@Res() response, @Param('id') id:number){
-  if(id<100){
-    return response.status(HttpStatus.OK).send(`Pagina del producto: ${id}`);
-  } else{
-    return response.status(HttpStatus.NOT_FOUND).send(`producto inexistente`)
+@Get('detalle/:id')
+  findWithResponse(@Res() response, @Param('id') id: number) {
+    if (id < 100) {
+      return response
+        .status(HttpStatus.OK)
+        .send(`Página del producto: ${id}`);
+    } else {
+      return response  
+        .status(HttpStatus.NOT_FOUND)
+        .send(`Producto inexistente`);
+    }
   }
-}
 
 //Decorador PUT
 @Put(':id')
@@ -102,6 +105,16 @@ delete(@Param('id') id: number) {
   return `Hemos borrado el producto ${id}`;
 }
 
-
+// Buscar por Id
+@Get(':id')
+getProductById(@Param('id', ParseIntPipe) id: number): Product {
+  const product = this.productsService.findById(id);
+  if (!product) {
+    throw new NotFoundException(`Producto con ID ${id} no encontrado`);
+  }
+  return product;
+}
 
 }
+
+

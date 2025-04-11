@@ -67,9 +67,36 @@ export class CustomersService {
           return item.id == id ? product : item;
         });
       }
-       delete(id: number) {
-          this.customers = this.customers.filter( (item: Customer) => item.id != id );
+
+
+      delete(id: number) {
+        const customer = this.customers.find((item: Customer) => item.id === id);
+      
+        if (!customer) {
+          return { message: `Cliente con ID ${id} no fue encontrado` };
         }
+      
+        this.customers = this.customers.filter((item: Customer) => item.id !== id);
+      
+        return { message: `Cliente con ID ${id} se borró correctamente` };
+      }
+      
+      
+      
+      partialUpdate(id: number, body: Partial<Customer>) {
+        const customer = this.customers.find((item: Customer) => item.id === id);
+      
+        if (!customer) {
+          return { message: `Cliente con ID ${id} no fue encontrado` };
+        }
+      
+        // Actualiza solo los campos presentes en el body
+        Object.assign(customer, body);
+      
+        return { message: `Cliente con ID ${id} fue actualizado correctamente` };
+      }
+      
+        
 
         
 }

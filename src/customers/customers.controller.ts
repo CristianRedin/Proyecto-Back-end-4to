@@ -35,7 +35,7 @@ carsQuery(@Query('count', ParseIntPipe) carCount: number) {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  createProduct(
+  createCustomers(
     @Body() body,
   ) {
     this.customerService.insert(body);
@@ -44,23 +44,39 @@ carsQuery(@Query('count', ParseIntPipe) carCount: number) {
 
   @Delete(':id')
   @HttpCode(HttpStatus.OK)
-  delete(@Param('id') id: number) { 
-    return `Cliente se borrado correctamente ${id}`;
+  delete(@Param('id') id: string) { 
+    const idNumber = parseInt(id, 10); 
+    return this.customerService.delete(idNumber);
   }
+  
+
 
   @Put(':id')
-  update(
-    @Param('id') id: number, 
-    @Body() body,
-  ) {
-    return this.customerService.update(id, body);
-  }
+update(
+  @Param('id') id: number, 
+  @Body() body,
+) {
+  this.customerService.update(id, body);
+  return {
+    message: `Cliente con ID ${id} se ha modificado correctamente`,
+  };
+}
+
 
   //Decorador PATCH
   @Patch(':id')
-  partialUpdate(@Param('id') id: number, @Body() body) {
-    return `Actualización parcial ${id}`;
-  }
+partialUpdate(@Param('id') id: number, @Body() body) {
+  this.customerService.partialUpdate(id, body);
+  return {
+    message: `Cliente con ID ${id} fue actualizado parcialmente`,
+  };
+}
+
+//Destruccion de 2 parametros
+@Get(':id/:size')
+findWithSize(@Param ('id') id: number, @Param('size') size: string) {
+    return `Detalle de producto ${id}, en tamaño ${size}`
+}
 
 
 }

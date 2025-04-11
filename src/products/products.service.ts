@@ -64,4 +64,10 @@ getAll(): Product[] {
   private lastId(): number {
     return this.products[this.products.length - 1].id;
   }
+
+  
+  findById(id: number): Product | undefined {
+    return this.products.find((item) => item.id === id);
+  }
+  
 }
